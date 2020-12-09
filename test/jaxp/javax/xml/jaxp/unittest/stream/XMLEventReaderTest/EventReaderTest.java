@@ -29,13 +29,16 @@ import javax.xml.stream.XMLEventReader;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.StartDocument;
+import javax.xml.stream.events.StartElement;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /*
  * @test
@@ -75,5 +78,16 @@ public class EventReaderTest {
 
         assertEquals(startDocumentEvent.isStandalone(), standalone);
         assertEquals(startDocumentEvent.standaloneSet(), standaloneSet);
+    }
+
+    @Test
+    void testCharactersAfterStartDocument() throws XMLStreamException {
+        String xml = "<?xml version=\"1.0\"?>\n<outer>";
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        XMLEventReader reader = factory.createXMLEventReader(new StringReader(xml));
+
+        assertTrue(reader.nextEvent() instanceof StartDocument);
+        assertTrue(reader.nextEvent() instanceof Characters);
+        assertTrue(reader.nextEvent() instanceof StartElement);
     }
 }
